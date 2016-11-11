@@ -73,10 +73,16 @@ $(document).on('click','.special-button', function(){
 //if an animated gif image is clicked again, it should stop playing	
 $(document).on("click",".gif-div", function(){
 	var id = $(this).attr("data-id");
+	//create a variable animated equal to the data-animated attribute
+	var animated = $(this).attr("data-animated");
 	var queryURL = "http://api.giphy.com/v1/gifs/" + id +"?api_key=dc6zaTOxFJmzC";
-	
-	if($(this).data("animated")==="still"){
+	//give the selected gif-div the id of picked.
+	$(this).attr("id", "picked");
+	console.log(this);
+	if(animated==="still"){
+		console.log(this);
 		$.ajax({url: queryURL, method: 'GET'}).done(function(response){
+			console.log(this);
 			var result = response.data;
 			//create a new div just like the original, except with the animated src
 			var happyDiv = $('<div class="gif-div">');
@@ -93,16 +99,44 @@ $(document).on("click",".gif-div", function(){
 			happyDiv.append(rating);
 
 			//replace the clicked gif-div with the new animated happyDiv
-			$("#animals").prepend(happyDiv);
-
-			divID = "#"+id;
+			var divID = "#"+id;
 			console.log(divID);
+			console.log(this);
+			console.log(happyDiv);
 
-			$("divID").replaceWith(happyDiv);
+			$("#picked").replaceWith(happyDiv);
+			//reset the id to empty (so no longer has id picked)
+			$("#picked").attr("id", "");
 		});
 	}
-	else if($(this).data("animated")==="animated"){
+	else if(animated==="animated"){
 		console.log("it's animated!");
+		$.ajax({url: queryURL, method: 'GET'}).done(function(response){
+			console.log(this);
+			var result = response.data;
+			//create a new div just like the original, except with the non-animated src
+			var happyDiv = $('<div class="gif-div">');
+			happyDiv.attr("data-id", result.id);
+			happyDiv.attr("data-animated", "still");
+			//make a p element to hold the rating of the gif
+			var rating = $('<p>').text("Rating: " + result.rating);
+			//create an image to contain the gif
+			var gifImage = $('<img>');
+			//give the gifImage the non-animated (still) link to the same gif
+			gifImage.attr('src', result.images.fixed_height_still.url);
+			//append the gif image and rating to the happyDiv
+			happyDiv.append(gifImage);
+			happyDiv.append(rating);
+
+			//replace the clicked gif-div with the new animated happyDiv
+			var divID = "#"+id;
+			console.log(divID);
+			console.log(this);
+			console.log(happyDiv);
+
+			$("#picked").replaceWith(happyDiv);
+			$("#picked").attr("id", "");
+		});
 	}
 });
 
